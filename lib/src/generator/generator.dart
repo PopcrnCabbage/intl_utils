@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:intl_utils/src/utils/object_converter.dart';
+
 import '../config/pubspec_config.dart';
 import '../constants/constants.dart';
 import '../utils/file_utils.dart';
@@ -109,7 +111,7 @@ class Generator {
 
     var content = mainArbFile.readAsStringSync();
     var decodedContent = json.decode(content) as Map<String, dynamic>;
-
+    decodedContent = parseTree(decodedContent, '/');
     var labels =
         decodedContent.keys.where((key) => !key.startsWith('@')).map((key) {
       var name = key;

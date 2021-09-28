@@ -31,6 +31,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:intl_utils/src/utils/object_converter.dart';
 import 'package:path/path.dart' as path;
 
 // Due to a delay in the maintenance of the 'intl_translation' package,
@@ -106,7 +107,8 @@ class IntlTranslationHelper {
   void _generateLocaleFile(
       String locale, List<Map> localeData, String targetDir) {
     var translations = <TranslatedMessage>[];
-    for (var jsonTranslations in localeData) {
+    for (var rawJsonTranslations in localeData) {
+      var jsonTranslations = parseTree(rawJsonTranslations,);
       jsonTranslations.forEach((id, messageData) {
         TranslatedMessage? message = _recreateIntlObjects(id, messageData);
         if (message != null) {

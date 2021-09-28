@@ -1,6 +1,9 @@
 import 'dart:convert' as convert;
 import 'dart:io';
 
+export 'object_converter.dart';
+export 'string_extension.dart';
+
 import 'package:dart_style/dart_style.dart' show DartFormatter;
 
 bool isValidClassName(String value) =>

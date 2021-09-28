@@ -1,9 +1,65 @@
 import '../utils/utils.dart';
 import 'label.dart';
 
+class LabelInsider {
+  String name = '';
+  List<Label> labels = [];
+  List<LabelInsider> classes = [];
+
+  String generateDartGetter({bool root = false}) {
+    var renderedClasses = classes.map((insider) =>
+        '''${insider.name.toCamelCase().capitalizeFirst()} get ${insider.name.toCamelCase()} => ${insider.name.toCamelCase().capitalizeFirst()}();''');
+    if (root) {
+      return '${renderedClasses.join("\n\n")}';
+    }
+    var className = name.toCamelCase().capitalizeFirst();
+    return """
+      class $className {
+      $className();
+      
+      ${renderedClasses.join("\n\n")}
+
+      ${labels.map((label) => label.generateDartGetter()).join("\n\n")}
+      }
+      """;
+  }
+}
+
 String generateL10nDartFileContent(
     String className, List<Label> labels, List<String> locales,
     [bool otaEnabled = false]) {
+  var insiders = <String, LabelInsider>{};
+  var filteredLabels = <Label>[];
+  var outsideLabels = <Label>[];
+  var rootInsider = LabelInsider();
+  for (var label in labels) {
+    var matches = '/'.allMatches(label.name);
+    if (matches.length == 1) {
+      label.name = label.name.replaceAll('/', '');
+      label.name = label.name.toCamelCase();
+      filteredLabels.add(label);
+    } else {
+      ///This case happens when we ve got bigger structure
+      var splittedLabel =
+          label.name.split('/').where((key) => key.isNotEmpty).toList();
+      var labelName = splittedLabel.removeLast();
+      label.name = labelName.toCamelCase();
+      outsideLabels.add(label);
+      var previousInsider = rootInsider;
+      for (var i = 0, l = splittedLabel.length; i < l; i++) {
+        var key = splittedLabel[i];
+        if (!insiders.containsKey(key)) {
+          insiders[key] = LabelInsider()..name = key;
+        }
+        var insider = insiders[key]!;
+        if (i == l - 1) {
+          insider.labels.add(label);
+        }
+        previousInsider.classes.add(insider);
+        previousInsider = insider;
+      }
+    }
+  }
   return """
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
@@ -53,9 +109,12 @@ class $className {
   static $className? maybeOf(BuildContext context) {
     return Localizations.of<$className>(context, $className);
   }
-${otaEnabled ? '\n${_generateMetadata(labels)}\n' : ''}
-${labels.map((label) => label.generateDartGetter()).join("\n\n")}
+${otaEnabled ? '\n${_generateMetadata(filteredLabels + outsideLabels)}\n' : ''}
+${filteredLabels.map((label) => label.generateDartGetter()).join("\n\n")}
+${rootInsider.generateDartGetter(root: true)}
 }
+
+${insiders.values.map((insider) => insider.generateDartGetter()).join("\n\n")}
 
 class AppLocalizationDelegate extends LocalizationsDelegate<$className> {
   const AppLocalizationDelegate();
