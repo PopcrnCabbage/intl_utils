@@ -32,11 +32,14 @@ String generateL10nDartFileContent(
   var filteredLabels = <Label>[];
   var outsideLabels = <Label>[];
   var rootInsider = LabelInsider();
+  var isSpicy = labels.firstWhere((label) => '/'.allMatches(label.name).length > 1) != null;
   for (var label in labels) {
     var matches = '/'.allMatches(label.name);
     if (matches.length == 1) {
       label.name = label.name.replaceAll('/', '');
-      label.name = label.name.toCamelCase();
+      if(isSpicy) {
+        label.name = label.name.toCamelCase();
+      }
       filteredLabels.add(label);
     } else {
       ///This case happens when we ve got bigger structure
