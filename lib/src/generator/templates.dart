@@ -4,7 +4,7 @@ import 'label.dart';
 class LabelInsider {
   String name = '';
   List<Label> labels = [];
-  List<LabelInsider> classes = [];
+  Set<LabelInsider> classes = {};
 
   String generateDartGetter({bool root = false}) {
     var renderedClasses = classes.map((insider) =>
