@@ -1,0 +1,7 @@
+builders:
+  intl_generator:
+    import: "package:intl_utils/intl_generator.dart"
+    builder_factories: ["getBuilder"]
+    build_extensions: { "{{}}.arb": ["{{}}.dart"] }
+    auto_apply: root_package
+    build_to: source

@@ -7,18 +7,29 @@ environment:
   sdk: '>=2.12.0-0 <3.0.0'
 
 dependencies:
-  analyzer: ^1.0.0
+  analyzer: ^2.1.0
   archive: ^3.0.0
   args: ^2.0.0
-  dart_style: ^2.0.0
   http: ^0.13.0
   intl: ^0.17.0
   path: ^1.8.0
   petitparser: ^4.0.0
   yaml: ^3.0.0
+  build:
+    path: ../build/build
+
+  glob: ^2.0.1
+  resource_portable: ^3.0.0
+  dart_style: any
 
 dev_dependencies:
-  build_runner: ^1.10.0
-  mockito: ^5.0.0
-  pedantic: ^1.10.0
-  test: ^1.16.0
+
+
+  test: any
+  build_runner:
+    path: ../build/build_runner
+  pedantic: ^1.11.1
+
+
+
+
